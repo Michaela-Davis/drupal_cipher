@@ -5,7 +5,14 @@
 
 ## Description
 
- This website was created using Drupal, a PHP framework. It contains a custom module called "shift_cipher" consisting of a form with inputs for "Shift Value", "Shift Direction", and "Encryption Phrase" that it uses to "encrypt" your secret message.
+ This website was created using Drupal, a PHP framework. It contains a custom module called "shift_cipher" consisting of a form with inputs for "Shift Value", "Shift Direction", and "Encrypt Phrase" that it uses to "encrypt" your secret message.
+
+ ## Shift Cipher Module Specifications
+
+ |    *Shift Value*   |    *Shift Direction*    |     *Encrypt Phrase*    |     *Output*    |
+ |-----------------|---------------|-----------------|-----------------|
+ | 3  | right | “hello"|  "khoor" |
+ | 1   | left | “hi there!" | "gh sgdqd!" |
 
 
 ## Prerequisites
