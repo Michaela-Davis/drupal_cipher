@@ -2,17 +2,17 @@
 
 function shift_cipher_menu() {
     $items['shift_cipher'] = [
-      'title' => 'Shift Cipher',
-      'page callback' => 'drupal_get_form',
-      'page arguments' => ['shift_cipher_form'],
-      'access callback' => TRUE,
-      'type' => MENU_NORMAL_ITEM,
+        'title' => 'Shift Cipher',
+        'page callback' => 'drupal_get_form',
+        'page arguments' => ['shift_cipher_form'],
+        'access callback' => TRUE,
+        'type' => MENU_NORMAL_ITEM,
     ];
     $items['shift_cipher_success_page'] = [
-      'title' => 'Success',
-      'page callback' => 'shift_cipher_success',
-      'access callback' => TRUE,
-      'type' => MENU_CALLBACK,
+        'title' => 'Success',
+        'page callback' => 'shift_cipher_success',
+        'access callback' => TRUE,
+        'type' => MENU_CALLBACK,
     ];
 
     return $items;
@@ -23,7 +23,8 @@ function shift_cipher_form() {
         '#title' => 'Shift Value',
         '#type' => 'textfield',
         '#required' => TRUE,
-        '#description' => t('Please enter the number of spaces you would like your phrase shifted.'),
+        '#description' => t('Please enter a number between 1 and 25.'),
+        '#element_validate' => ['element_validate_range'],
     ];
 
     $form['shift_direction'] = [
@@ -31,6 +32,7 @@ function shift_cipher_form() {
         '#type' => 'textfield',
         '#required' => TRUE,
         '#description' => t('Please enter "right" or "left".'),
+        '#element_validate' => ['element_validate_direction'],
     ];
 
     $form['encrypt_phrase'] = [
@@ -52,13 +54,26 @@ function shift_cipher_form_submit($form, &$form_state) {
     $input_phrase = $form_state['values']['encrypt_phrase'];
     $output_phraseEncrypted = [];
 
-
+    $output = implode(" ", $output_phraseEncrypted);
     $_SESSION['output'] = $output;
     $form_state['redirect'] = 'shift_cipher_success_page';
 
 }
 
 function shift_cipher_success() {
-  $output = $_SESSION['output'];
-  return 'Here is your encrypted phrase: ' . $output;
+    $output = $_SESSION['output'];
+    return 'Here is your encrypted phrase: ' . $output;
+}
+
+
+function element_validate_direction($element) {
+    if (!($element['#value'] == "right" || $element['#value'] == "left")) {
+        form_error($element, t('Direction must be "right" or "left"!'));
+    }
+}
+
+function element_validate_range($element) {
+    if (!($element['#value'] >= 1 && $element['#value'] <= 25)) {
+        form_error($element, t('Please enter a number between 1 and 25!'));
+    }
 }
