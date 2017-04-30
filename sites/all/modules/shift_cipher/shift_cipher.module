@@ -1,0 +1,64 @@
+<?php
+
+function shift_cipher_menu() {
+    $items['shift_cipher'] = [
+      'title' => 'Shift Cipher',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => ['shift_cipher_form'],
+      'access callback' => TRUE,
+      'type' => MENU_NORMAL_ITEM,
+    ];
+    $items['shift_cipher_success_page'] = [
+      'title' => 'Success',
+      'page callback' => 'shift_cipher_success',
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+    ];
+
+    return $items;
+}
+
+function shift_cipher_form() {
+    $form['shift_value'] = [
+        '#title' => 'Shift Value',
+        '#type' => 'textfield',
+        '#required' => TRUE,
+        '#description' => t('Please enter the number of spaces you would like your phrase shifted.'),
+    ];
+
+    $form['shift_direction'] = [
+        '#title' => 'Shift Direction',
+        '#type' => 'textfield',
+        '#required' => TRUE,
+        '#description' => t('Please enter "right" or "left".'),
+    ];
+
+    $form['encrypt_phrase'] = [
+        '#title' => 'Encrypt Phrase',
+        '#type' => 'textfield',
+        '#required' => TRUE,
+        '#description' => t('Please enter the phrase you want encrypted.'),
+    ];
+
+    $form['submit'] = [
+        '#type' => 'submit',
+        '#value' => 'Encrypt',
+    ];
+
+    return $form;
+}
+
+function shift_cipher_form_submit($form, &$form_state) {
+    $input_phrase = $form_state['values']['encrypt_phrase'];
+    $output_phraseEncrypted = [];
+
+
+    $_SESSION['output'] = $output;
+    $form_state['redirect'] = 'shift_cipher_success_page';
+
+}
+
+function shift_cipher_success() {
+  $output = $_SESSION['output'];
+  return 'Here is your encrypted phrase: ' . $output;
+}

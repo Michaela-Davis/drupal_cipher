@@ -1,0 +1,5 @@
+name = Shift Cipher
+description = Displays output of the Shift Cipher using a form for input.
+package = My Modules
+core = 7.x
+files[] = shift_cipher.module
