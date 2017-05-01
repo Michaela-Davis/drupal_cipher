@@ -1,12 +1,9 @@
 /* www.devsaran.com */
 
-.region #block-block-1 {
-  border-radius: 3px;
-  font-family: 'Architects Daughter', cursive;
-  letter-spacing: 0.04em;
-  font-weight: bolder;
-  height: 100px;
-  font-size: 90%;
+.biggerContent {
+    font-size: 1.5em;
+    letter-spacing: .05em;
+    padding-top: 15px;
 }
 
 html, body, div, span, applet, object, iframe,

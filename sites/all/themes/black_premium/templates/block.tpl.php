@@ -49,7 +49,9 @@
   <?php print render($title_suffix); ?>
 
   <div class="content"<?php print $content_attributes; ?>>
-    <?php print $content ?>
+      <div class="biggerContent">
+          <?php print $content ?>
+      </div>
   </div>
-  
+
 </div> <!-- /.block -->
