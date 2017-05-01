@@ -2,12 +2,13 @@
 
 function shift_cipher_menu() {
     $items['shift_cipher'] = [
-        'title' => 'Shift Cipher',
+        'title' => ' ',
         'page callback' => 'drupal_get_form',
         'page arguments' => ['shift_cipher_form'],
         'access callback' => TRUE,
         'type' => MENU_NORMAL_ITEM,
     ];
+
     $items['shift_cipher_success_page'] = [
         'title' => 'Success',
         'page callback' => 'shift_cipher_success',
@@ -40,6 +41,7 @@ function shift_cipher_form() {
         '#type' => 'textfield',
         '#required' => TRUE,
         '#description' => t('Please enter the phrase you want encrypted.'),
+        '#element_validate' => ['element_validate_characters'],
     ];
 
     $form['submit'] = [
@@ -51,13 +53,85 @@ function shift_cipher_form() {
 }
 
 function shift_cipher_form_submit($form, &$form_state) {
+    $shift = $form_state['values']['shift_value'];
+    $direction = $form_state['values']['shift_direction'];
     $input_phrase = $form_state['values']['encrypt_phrase'];
     $output_phraseEncrypted = [];
 
-    $output = implode(" ", $output_phraseEncrypted);
+    $alphabet = [
+        'a',
+        'b',
+        'c',
+        'd',
+        'e',
+        'f',
+        'g',
+        'h',
+        'i',
+        'j',
+        'k',
+        'l',
+        'm',
+        'n',
+        'o',
+        'p',
+        'q',
+        'r',
+        's',
+        't',
+        'u',
+        'v',
+        'w',
+        'x',
+        'y',
+        'z',
+    ];
+
+    // Turn input to lowercase and break into individual letters
+    $input_lowered = strtolower($input_phrase);
+    $input_array_of_letters = str_split($input_lowered);
+
+    // Converts letters to numbers using alphabet
+    foreach ($input_array_of_letters as $key => $letter) {
+        $key_from_alphabet = array_search($letter, $alphabet);
+        // Checks if it was a letter, otherwise skip
+        if ($key_from_alphabet) {
+            $input_array_of_letters[$key] = $key_from_alphabet;
+        }
+    }
+
+    // Converts alphabet to encryption cipher
+    $encrypt_key = $alphabet;
+    for ($i = 1; $i <= $shift; $i++) {
+        //  Shifts left
+        if ($direction == 'left') {
+            // array_pop takes it off the end
+            $temp = array_pop($encrypt_key);
+            // array_unshift adds it to the beginning
+            array_unshift($encrypt_key, $temp);
+            //  OR
+            // Shifts right
+        } elseif ($direction == 'right') {
+            // array_shift removes it from the beginning
+            $temp = array_shift($encrypt_key);
+            // array_push adds it to the end
+            array_push($encrypt_key, $temp);
+        }
+    }
+
+    // Converts numbers back to letters using encrypt key
+    foreach ($input_array_of_letters as $key => $number) {
+        // is_int only converts numbers back to letters
+        if (is_int($number)) {
+            $letter_from_encrypt_key = $encrypt_key[$number];
+            $input_array_of_letters[$key] = $letter_from_encrypt_key;
+        }
+    }
+
+    // Brings everything back together with punctuation and spacing!
+    $output = implode("", $input_array_of_letters);
     $_SESSION['output'] = $output;
     $form_state['redirect'] = 'shift_cipher_success_page';
-
 }
 
 function shift_cipher_success() {
@@ -65,15 +139,90 @@ function shift_cipher_success() {
     return 'Here is your encrypted phrase: ' . $output;
 }
 
-
 function element_validate_direction($element) {
     if (!($element['#value'] == "right" || $element['#value'] == "left")) {
-        form_error($element, t('Direction must be "right" or "left"!'));
+        form_error($element, t('Direction must be "right" or "left".'));
     }
 }
 
 function element_validate_range($element) {
     if (!($element['#value'] >= 1 && $element['#value'] <= 25)) {
-        form_error($element, t('Please enter a number between 1 and 25!'));
+        form_error($element, t('Please enter a number between 1 and 25.'));
+    }
+}
+
+function element_validate_characters($element) {
+    $allowed_characters = [
+        '',
+        '.',
+        ';',
+        ':',
+        '?',
+        '!',
+        ',',
+        ' ',
+
+        'a',
+        'b',
+        'c',
+        'd',
+        'e',
+        'f',
+        'g',
+        'h',
+        'i',
+        'j',
+        'k',
+        'l',
+        'm',
+        'n',
+        'o',
+        'p',
+        'q',
+        'r',
+        's',
+        't',
+        'u',
+        'v',
+        'w',
+        'x',
+        'y',
+        'z',
+
+        'A',
+        'B',
+        'C',
+        'D',
+        'E',
+        'F',
+        'G',
+        'H',
+        'I',
+        'J',
+        'K',
+        'L',
+        'M',
+        'N',
+        'O',
+        'P',
+        'Q',
+        'R',
+        'S',
+        'T',
+        'U',
+        'V',
+        'W',
+        'X',
+        'Y',
+        'Z',
+    ];
+    $input_phrase = $element['#value'];
+    $input_phrase_array = str_split($input_phrase);
+
+    // Go through input - if it's not in allowed_characters array above then throw the error
+    foreach($input_phrase_array as $letter) {
+        if (!(array_search($letter, $allowed_characters))) {
+            form_error($element, t('The only characters allowed are letters, spaces, and puncutation.'));
+        }
     }
 }
