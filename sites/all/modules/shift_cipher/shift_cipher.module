@@ -94,8 +94,8 @@ function shift_cipher_form_submit($form, &$form_state) {
     // Converts letters to numbers using alphabet
     foreach ($input_array_of_letters as $key => $letter) {
         $key_from_alphabet = array_search($letter, $alphabet);
-        // Checks if it was a letter, otherwise skip
-        if ($key_from_alphabet) {
+        // Checks if it was a letter, otherwise skip -  !!! WITHOUT is_int it won't jump the gap from z to a (or vice-versa) because it misunderstands 0 as falsy - is_int will return truthy for 0 instead of falsy !!!
+        if (is_int($key_from_alphabet)) {
             $input_array_of_letters[$key] = $key_from_alphabet;
         }
     }
@@ -136,7 +136,8 @@ function shift_cipher_form_submit($form, &$form_state) {
 
 function shift_cipher_success() {
     $output = $_SESSION['output'];
-    return 'Here is your encrypted phrase: ' . $output;
+    // return 'Here is your encrypted phrase: ' . $output;
+    return $output;
 }
 
 function element_validate_direction($element) {
